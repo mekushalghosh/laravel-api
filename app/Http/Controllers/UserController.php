@@ -11,4 +11,14 @@ class UserController extends Controller
         $users = User::all();
         return $users;
     }
+    public function createUser(Request $data){
+        $validatedData = $data -> validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+        ]);
+
+        $user = User::create($validatedData);
+        return response()-> json(['message' => 'Successfully created user', 'user' => $user],201);
+    }
 }
