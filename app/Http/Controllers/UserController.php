@@ -11,6 +11,7 @@ class UserController extends Controller
         $users = User::all();
         return $users;
     }
+
     public function createUser(Request $data){
 
         //Edge case if anyfield is empty
@@ -38,5 +39,26 @@ class UserController extends Controller
         
         $user = User::create($validatedData);
         return response()-> json(['message' => 'Successfully created user', 'user' => $user],201);
+    }
+
+    public function updateUser(Request $data){
+        //Edge case for empty email field
+        if(!$data-> filled('email') || !$data-> filled('name') ){
+            return response()-> json(['message' => 'Fields are empty please check again'],200);
+        }
+
+        //Edge case for if user doesnot exists
+        function checkUserExists(string $email){
+            return User::where('email',$email)-> exists();
+        }
+
+        //Return response if there is no user exists
+        if(!checkUserExists($data['email'])){
+            return response()-> json(['message' => 'User doesnot exists'],200);
+        }
+
+        //Code for if user exists
+        $user = User::where('email',$data['email'])->update(['name'=>$data['name']]);
+        return response()-> json(['message' => 'User updated successfully'],201);
     }
 }
