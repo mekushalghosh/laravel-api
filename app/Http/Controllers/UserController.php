@@ -61,4 +61,25 @@ class UserController extends Controller
         $user = User::where('email',$data['email'])->update(['name'=>$data['name']]);
         return response()-> json(['message' => 'User updated successfully'],201);
     }
+
+    public function deleteUser(Request $data){
+        //Edge case for checking empty email field
+        if(!$data->filled('email')){
+            return response()->json(['message'=>'Some fields are empty, please check again.'],400);
+        }
+        //Edge case for checking if user exists or no
+        function checkUserExists(string $email){
+            return User::where('email',$email)->exists();
+        }
+        //Return response if there is no user exists
+        if(!checkUserExists($data['email'])){
+            return response()-> json(['message' => 'User doesnot exists'],200);
+        }
+
+        //Code for deleting users
+        $user = User::where('email',$data['email'])->delete();
+        return response()-> json(['message' => 'User deleted successfully'],201);
+    }
 }
+
+
