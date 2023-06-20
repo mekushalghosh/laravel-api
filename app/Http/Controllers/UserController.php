@@ -12,6 +12,12 @@ class UserController extends Controller
         return $users;
     }
 
+    //Checks that if email exists or not
+    public function checkEmailExists(string $email){
+        $emailExists = User::where('email', $email)->exists();
+        return $emailExists;
+    }
+
     public function createUser(Request $data){
 
         //Edge case if anyfield is empty
@@ -19,14 +25,8 @@ class UserController extends Controller
             return response()-> json(['message' => 'Some fields are empty, please check again'],200);
         }
 
-        //Edge case for checking if email already exists or not
-        function checkUniqueEmail(string $email){
-            $emailExists = User::where('email', $email)->exists();
-            return $emailExists;
-        }
-        
         //If email exists then it will send response back
-        if(checkUniqueEmail($data['email'])){
+        if($this->checkEmailExists($data['email'])){
             return response()-> json(['message' => 'Email already taken'],200);
         }
 
@@ -47,13 +47,8 @@ class UserController extends Controller
             return response()-> json(['message' => 'Fields are empty please check again'],200);
         }
 
-        //Edge case for if user doesnot exists
-        function checkUserExists(string $email){
-            return User::where('email',$email)-> exists();
-        }
-
         //Return response if there is no user exists
-        if(!checkUserExists($data['email'])){
+        if(!$this->checkEmailExists($data['email'])){
             return response()-> json(['message' => 'User doesnot exists'],200);
         }
 
@@ -67,12 +62,9 @@ class UserController extends Controller
         if(!$data->filled('email')){
             return response()->json(['message'=>'Some fields are empty, please check again.'],400);
         }
-        //Edge case for checking if user exists or no
-        function checkUserExists(string $email){
-            return User::where('email',$email)->exists();
-        }
+
         //Return response if there is no user exists
-        if(!checkUserExists($data['email'])){
+        if(!$this->checkEmailExists($data['email'])){
             return response()-> json(['message' => 'User doesnot exists'],200);
         }
 
