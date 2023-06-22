@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Auth;
 
 class UserController extends Controller
 {
@@ -71,6 +72,21 @@ class UserController extends Controller
         //Code for deleting users
         $user = User::where('email',$data['email'])->delete();
         return response()-> json(['message' => 'User deleted successfully'],201);
+    }
+
+    public function loginUser(Request $data){
+        Auth::attempt(['email' => $data['email'], 'password' => $data['password']]);
+        $user = Auth::user();
+        // dd($user);
+        $token = $user->createToken('mytoken')->plainTextToken;
+        return response()->json(['token' => $token],200);
+
+    }
+
+    public function userDetails(){
+        $user = Auth::user();
+        // dd($user);
+        return response()->json(['data' => $user],200);
     }
 }
 

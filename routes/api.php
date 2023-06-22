@@ -26,3 +26,7 @@ Route::post('/createuser',[UserController::class, 'createUser']);
 Route::post('/updateuser',[UserController::class, 'updateUser']);
 
 Route::post('/deleteuser',[UserController::class, 'deleteUser']);
+
+Route::post('/login',[UserController::class, 'loginUser']);
+
+Route::get('/myaccount', [UserController::class, 'userDetails'])->middleware('auth:sanctum');
