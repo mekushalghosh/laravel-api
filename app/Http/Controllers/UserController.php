@@ -75,11 +75,15 @@ class UserController extends Controller
     }
 
     public function loginUser(Request $data){
-        Auth::attempt(['email' => $data['email'], 'password' => $data['password']]);
-        $user = Auth::user();
-        // dd($user);
-        $token = $user->createToken('mytoken')->plainTextToken;
-        return response()->json(['token' => $token],200);
+        if(Auth::attempt(['email' => $data['email'], 'password' => $data['password']])){
+            $user = Auth::user();
+            // dd($user);
+            $token = $user->createToken('mytoken')->plainTextToken;
+            return response()->json(['token' => $token],200);
+        }
+        else{
+            return response()->json(['message'=>'Email and password is invalid, please try again'],403);
+        }
 
     }
 
